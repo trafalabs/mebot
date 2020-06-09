@@ -5,13 +5,12 @@ import json, requests, urllib
 class Server(Config):
     _session        = requests.session()
     timelineHeaders = {}
-    liffHeaders     = {}
     Headers         = {}
 
-    def __init__(self, appType=None):
+    def __init__(self):
         self.Headers = {}
-        self.timelineHeaders = {}
-        Config.__init__(self, appType)
+        self.channelHeaders = {}
+        Config.__init__(self)
 
     def parseUrl(self, path):
         return self.LINE_HOST_DOMAIN + path
@@ -36,12 +35,6 @@ class Server(Config):
 
     def setTimelineHeaders(self, argument, value):
         self.timelineHeaders[argument] = value
-
-    def setLiffHeadersWithDict(self, headersDict):
-        self.liffHeaders.update(headersDict)
-
-    def setLiffHeaders(self, key, value):
-        self.liffHeaders[key] = value
 
     def additionalHeaders(self, source, newSource):
         headerList={}

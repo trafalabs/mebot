@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-from akad.ttypes import TalkException, ShouldSyncException
 from .client import LINE
-from threading import Thread
 from types import *
 
-import os, sys, time
+import os, sys, threading, time
 
 class OEPoll(object):
     OpInterrupt = {}
@@ -16,14 +14,16 @@ class OEPoll(object):
         if type(client) is not LINE:
             raise Exception('You need to set LINE instance to initialize OEPoll')
         self.client = client
-        self.threads = []
-
+    
+    def __fetchOperation(self, revision, count=1):
+        return self.client.poll.fetchOperations(revision, count)
+    
     def __execute(self, op, threading):
         try:
             if threading:
-                _td = Thread(target=self.OpInterrupt[op.type], args=(op,))
+                _td = threading.Thread(target=self.OpInterrupt[op.type](op))
                 _td.daemon = False
-                self.threads.append(_td)
+                _td.start()
             else:
                 self.OpInterrupt[op.type](op)
         except Exception as e:
@@ -38,34 +38,24 @@ class OEPoll(object):
     def setRevision(self, revision):
         self.client.revision = max(revision, self.client.revision)
 
-    def singleTrace(self, count=1, fetchOperations=None):
-        if not fetchOperations:
-            fetchOperations = self.client.fetchOperation
+    def singleTrace(self, count=1):
         try:
-            operations = fetchOperations(self.client.revision, count=count)
+            operations = self.__fetchOperation(self.client.revision, count=count)
         except KeyboardInterrupt:
-            sys.exit()
-        except ShouldSyncException:
-            self.setRevision(self.client.poll.getLastOpRevision())
-            return []
+            exit()
         except:
-            return []
-
+            return
+        
         if operations is None:
             return []
         else:
             return operations
 
-    def trace(self, threading=False, fetchOperations=None):
-        if not fetchOperations:
-            fetchOperations = self.client.fetchOperation
+    def trace(self, threading=False):
         try:
-            operations = fetchOperations(self.client.revision)
+            operations = self.__fetchOperation(self.client.revision)
         except KeyboardInterrupt:
-            sys.exit()
-        except ShouldSyncException:
-            self.setRevision(self.client.poll.getLastOpRevision())
-            return
+            exit()
         except:
             return
         
@@ -73,11 +63,6 @@ class OEPoll(object):
             if op.type in self.OpInterrupt.keys():
                 self.__execute(op, threading)
             self.setRevision(op.revision)
-        for thread in self.threads:
-            thread.start()
-        for thread in self.threads:
-            thread.join()
-        self.threads = []
 
     def singleFetchSquareChat(self, squareChatMid, limit=1):
         if squareChatMid not in self.__squareSubId:
