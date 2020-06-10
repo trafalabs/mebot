@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from linepy import *
 from datetime import datetime
 from time import sleep
@@ -239,6 +237,8 @@ def helpmessage():
                   "║" + "\n" + \
                   "╚═〘 Credits By: ©Nadya_TJ™  〙"
     return helpMessage
+    
+dasd="abc"+
     
 def helptexttospeech():
     helpTextToSpeech =   "╔══〘 T E X T   T O   S P E E C H 〙" + "\n" + \

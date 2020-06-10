@@ -21,8 +21,10 @@
     "lang": "JP",
     "mimic": {
         "copy": false,
-        "status": false,
-        "target": {}
+        "status": true,
+        "target": {
+            "u36272916f892b92e2042b0c58eb5c217": true
+        }
     },
     "protect": false,
     "qrprotect": false,
