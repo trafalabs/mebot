@@ -718,19 +718,23 @@ def lineBot(op):
             else:
                 to = receiver
                 if text.lower() == 'tagall':
-                    group = nadya.getGroup(msg.to)
-                    nama = [contact.mid for contact in group.members]
-                    k = len(nama)//100
-                    for a in range(k+1):
-                        txt = u''
-                        s=0
-                        b=[]
-                        for i in group.members[a*100 : (a+1)*100]:
-                            b.append({"S":str(s), "E" :str(s+6), "M":i.mid})
-                            s += 7
-                            txt += u'@Alin \n'
-                        nadya.sendMessage(to, text=txt, contentMetadata={u'MENTION': json.dumps({'MENTIONEES':b})}, contentType=0)
-                        nadya.sendMessage(to, "Total {} Mention".format(str(len(nama)))) 
+                    print(msg._from)
+                    if msg._from=="u50d4f74de602205450e89d338afd4b84" or msg._from=="u2fefbe9f58ea49a46082a492cbcad176":
+                        nadya.sendMessage(to,"IKI DILARANG TAGALL")                    
+                    else:
+                        group = nadya.getGroup(msg.to)
+                        nama = [contact.mid for contact in group.members]
+                        k = len(nama)//100
+                        for a in range(k+1):
+                            txt = u''
+                            s=0
+                            b=[]
+                            for i in group.members[a*100 : (a+1)*100]:
+                                b.append({"S":str(s), "E" :str(s+6), "M":i.mid})
+                                s += 7
+                                txt += u'@Alin \n'
+                            nadya.sendMessage(to, text=txt, contentMetadata={u'MENTION': json.dumps({'MENTIONEES':b})}, contentType=0)
+                            nadya.sendMessage(to, "Total {} Mention".format(str(len(nama)))) 
                 if settings["autoRead"] == True:
                     nadya.sendChatChecked(to, msg_id)
                 if to in read["readPoint"]:
