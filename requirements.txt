@@ -1,0 +1,7 @@
+rsa
+thrift
+requests
+bs4
+gtts
+pytz
+humanfriendly
