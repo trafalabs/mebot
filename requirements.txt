@@ -5,3 +5,8 @@ bs4
 gtts
 pytz
 humanfriendly
+hyper
+httpx
+httplib2
+python-axolotl-curve25519
+pycryptodome
