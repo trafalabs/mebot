@@ -78,6 +78,7 @@ class Timeline(Channel):
         if mid is None:
             mid = self.profile.mid
         home = self.getProfileDetail(mid)
+        print("HOME: "+str(home))
         params = {'userid': mid, 'oid': home['result']['objectId']}
         return self.server.urlEncode(self.server.LINE_OBS_DOMAIN, '/myhome/c/download.nhn', params)
 

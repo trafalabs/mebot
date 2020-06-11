@@ -8,6 +8,7 @@ from humanfriendly import format_timespan, format_size, format_number, format_le
 import time, random, sys, json, codecs, threading, glob, re, string, os, requests, subprocess, six, ast, pytz, urllib, urllib.parse
 from gtts import gTTS
 from googletrans import Translator
+import livejson
 #==============================================================================#
 botStart = time.time()
 
@@ -24,10 +25,10 @@ lineSettings = nadya.getSettings()
 oepoll = OEPoll(nadya)
 #==============================================================================#
 readOpen = codecs.open("read.json","r","utf-8")
-settingsOpen = codecs.open("temp.json","r","utf-8")
+# settingsOpen = codecs.open("temp.json","r","utf-8")
 
 read = json.load(readOpen)
-settings = json.load(settingsOpen)
+settings = livejson.File("temp.json",True,False,2)
 
 
 myProfile = {
@@ -148,7 +149,7 @@ def helpmessage():
                   "╠➥ SearchImage「Search」" + "\n" + \
                   "╠➥ ScreenshootWebsite「LinkUrl」" + "\n" + \
                   "║" + "\n" + \
-                  "╚═〘 Credits By: ©Nadya_TJ™  〙"+"\n"+\
+                  "║〘 Credits By: ©Nadya_TJ™  〙"+"\n"+\
                       "╚═〘 Mdified By: sean.makuto  〙"
     return helpMessage
     
@@ -159,7 +160,7 @@ def lineBot(op):
             return
         if op.type == 5:
             print ("[ 5 ] NOTIFIED ADD CONTACT")
-            if settings["autoAdd"] == True:
+            if settings['autoAdd']:
                 nadya.sendMessage(op.param1, "Halo {} terimakasih telah menambahkan saya sebagai teman :D".format(str(nadya.getContact(op.param1).displayName)))
         if op.type == 13:
             print ("[ 13 ] NOTIFIED INVITE GROUP")
@@ -240,6 +241,8 @@ def lineBot(op):
                         else: ret_ += "\n╠ Check Sticker ❌"
                         if settings["detectMention"] == True: ret_ += "\n╠ Detect Mention ✅"
                         else: ret_ += "\n╠ Detect Mention ❌"
+                        if settings["cekSider"] == True: ret_ += "\n╠ Cek Sider ✅"
+                        else: ret_ += "\n╠ Cek Sider ❌"
                         ret_ += "\n╚══[ Status ]"
                         nadya.sendMessage(to, str(ret_))
                     except Exception as e:
@@ -247,6 +250,18 @@ def lineBot(op):
                 elif text.lower() == 'autoadd on':
                     settings["autoAdd"] = True
                     nadya.sendMessage(to, "Berhasil mengaktifkan Auto Add")
+                elif text.lower() == 'ceksider on':
+                    try:
+                        settings["cekSider"] = True
+                        nadya.sendMessage(to, "Berhasil mengaktifkan Cek Sider")
+                    except:
+                        nadya.sendMessage(to, "Gagal mengaktifkan Cek Sider")
+                elif text.lower() == 'ceksider off':
+                    try:
+                        settings["cekSider"] = False
+                        nadya.sendMessage(to, "Berhasil nonaktifkan Cek Sider")
+                    except:
+                        nadya.sendMessage(to, "Gagal nonaktifkan Cek Sider")
                 elif text.lower() == 'autoadd off':
                     settings["autoAdd"] = False
                     nadya.sendMessage(to, "Berhasil menonaktifkan Auto Add")
@@ -304,7 +319,8 @@ def lineBot(op):
                 elif text.lower() == 'mycover':
                     me = nadya.getContact(nadyaMID)
                     cover = nadya.getProfileCoverURL(nadyaMID)    
-                    nadya.sendImageWithURL(msg.to, cover)
+                    print("URL: "+cover)
+                    nadya.sendVideoWithURL(msg.to, cover)
                 elif msg.text.lower().startswith("stealcontact "):
                     if 'MENTION' in msg.contentMetadata.keys()!= None:
                         names = re.findall(r'@(\w+)', text)
@@ -365,7 +381,7 @@ def lineBot(op):
                             if mention["M"] not in lists:
                                 lists.append(mention["M"])
                         for ls in lists:
-                            path = "http://dl.profile.nadya.naver.jp/" + nadya.getContact(ls).pictureStatus
+                            path = "http://dl.profile.line-cdn.net/" + nadya.getContact(ls).pictureStatus
                             nadya.sendImageWithURL(msg.to, str(path))
                 elif msg.text.lower().startswith("stealvideoprofile "):
                     if 'MENTION' in msg.contentMetadata.keys()!= None:
@@ -377,10 +393,11 @@ def lineBot(op):
                             if mention["M"] not in lists:
                                 lists.append(mention["M"])
                         for ls in lists:
-                            path = "http://dl.profile.nadya.naver.jp/" + nadya.getContact(ls).pictureStatus + "/vp"
-                            nadya.sendImageWithURL(msg.to, str(path))
+                            path = "http://dl.profile.line-cdn.net/" + nadya.getContact(ls).pictureStatus + "/vp"
+                            print("URL: "+path)
+                            # nadya.sendVideoWithURL(msg.to, str(path))
                 elif msg.text.lower().startswith("stealcover "):
-                    if line != None:
+                    if nadya != None:
                         if 'MENTION' in msg.contentMetadata.keys()!= None:
                             names = re.findall(r'@(\w+)', text)
                             mention = ast.literal_eval(msg.contentMetadata['MENTION'])
@@ -392,6 +409,20 @@ def lineBot(op):
                             for ls in lists:
                                 path = nadya.getProfileCoverURL(ls)
                                 nadya.sendImageWithURL(msg.to, str(path))
+                elif msg.text.lower().startswith("stealvideocover "):
+                    if nadya != None:
+                        if 'MENTION' in msg.contentMetadata.keys()!= None:
+                            names = re.findall(r'@(\w+)', text)
+                            mention = ast.literal_eval(msg.contentMetadata['MENTION'])
+                            mentionees = mention['MENTIONEES']
+                            lists = []
+                            for mention in mentionees:
+                                if mention["M"] not in lists:
+                                    lists.append(mention["M"])
+                            for ls in lists:
+                                path = nadya.getContact(ls)                              
+                                print("VIDURL"+str(path))
+                                # nadya.sendVideoWithURL(msg.to, str(path))
                 elif msg.text.lower().startswith("cloneprofile "):
                     if 'MENTION' in msg.contentMetadata.keys()!= None:
                         names = re.findall(r'@(\w+)', text)
@@ -564,7 +595,7 @@ def lineBot(op):
                         txt = u''
                         s=0
                         b=[]
-                        for i in group.members[a*100 : (a+1)*100]:
+                        for i in group.members[a*100 : (a+1)*100-1]:
                             b.append({"S":str(s), "E" :str(s+6), "M":i.mid})
                             s += 7
                             txt += u'@Alin \n'
@@ -701,7 +732,32 @@ def lineBot(op):
                             print (error)
                         pass
                     else:
-                        nadya.sendMessage(receiver,"Lurking has not been set.")                                       
+                        nadya.sendMessage(receiver,"Lurking has not been set.") 
+                elif msg.text.lower().startswith("kick "):
+                    if msg.toType != 2: return nadya.sendMessage(to, 'Failed kick member, use this command only on group chat')
+                    if 'MENTION' in msg.contentMetadata.keys():
+                        mentions = ast.literal_eval(msg.contentMetadata['MENTION'])
+                        for mention in mentions['MENTIONEES']:
+                            mid = mention['M']
+                            if mid == nadyaMID:
+                                continue
+                            try:
+                                nadya.kickoutFromGroup(to, [mid])
+                            except Exception as talk_error:
+                                return nadya.sendMessage(to, 'Failed kick members, the reason is ')
+                            time.sleep(0.8)
+                        nadya.sendMessage(to, 'Success kick members, totals %i members' % len(mentions['MENTIONEES']))
+                    else:
+                        nadya.sendMessage(to, 'Failed kick member, please mention user you want to kick')                                      
+            elif msg.contentType==7:
+                        if settings['checkSticker']:
+                            res = '╭───「 Sticker Info 」'
+                            res += '\n├ Sticker ID : ' + msg.contentMetadata['STKID']
+                            res += '\n├ Sticker Packages ID : ' + msg.contentMetadata['STKPKGID']
+                            res += '\n├ Sticker Version : ' + msg.contentMetadata['STKVER']
+                            res += '\n├ Sticker Link : line://shop/detail/' + msg.contentMetadata['STKPKGID']
+                            res += '\n╰───「 Hello World 」'
+                            nadya.sendMessage(to, str(res))
 #==============================================================================#
         if op.type == 26:
             print ("[ 26 ] RECEIVE MESSAGE")
@@ -717,11 +773,12 @@ def lineBot(op):
                     to = receiver
             else:
                 to = receiver
-                if text.lower() == 'tagall':
-                    print(msg._from)
-                    if msg._from=="u50d4f74de602205450e89d338afd4b84" or msg._from=="u2fefbe9f58ea49a46082a492cbcad176":
-                        nadya.sendMessage(to,"IKI DILARANG TAGALL")                    
-                    else:
+                if msg.contentType==0:
+                    if text.lower() == 'tagall':
+                        print(msg._from)
+                        # if msg._from=="u50d4f74de602205450e89d338afd4b84" or msg._from=="u2fefbe9f58ea49a46082a492cbcad176":
+                        #     nadya.sendMessage(to,"IKI DILARANG TAGALL")                    
+                        # else:
                         group = nadya.getGroup(msg.to)
                         nama = [contact.mid for contact in group.members]
                         k = len(nama)//100
@@ -734,7 +791,19 @@ def lineBot(op):
                                 s += 7
                                 txt += u'@Alin \n'
                             nadya.sendMessage(to, text=txt, contentMetadata={u'MENTION': json.dumps({'MENTIONEES':b})}, contentType=0)
-                            nadya.sendMessage(to, "Total {} Mention".format(str(len(nama)))) 
+                            nadya.sendMessage(to, "Total {} Mention".format(str(len(nama))))
+                elif msg.contentType==7:
+                    if settings['checkSticker']:
+                        res = '╭───「 Sticker Info 」'
+                        res += '\n├ Sticker ID : ' + msg.contentMetadata['STKID']
+                        res += '\n├ Sticker Packages ID : ' + msg.contentMetadata['STKPKGID']
+                        res += '\n├ Sticker Version : ' + msg.contentMetadata['STKVER']
+                        res += '\n├ Sticker Link : line://shop/detail/' + msg.contentMetadata['STKPKGID']
+                        res += '\n╰───「 Hello World 」'
+                        nadya.sendMessage(to, str(res))
+                        # nadya.sendMessage(to, str(msg.contentMetadata))                                               
+                        nadya.sendImage(to,msg.contentMetadata['STKPKGID'],msg.contentMetadata['STKID'])
+                        # nadya.sendImage(b,)
                 if settings["autoRead"] == True:
                     nadya.sendChatChecked(to, msg_id)
                 if to in read["readPoint"]:
@@ -759,13 +828,21 @@ def lineBot(op):
                                 break
 #==============================================================================#
         if op.type == 55:
-            print ("[ 55 ] NOTIFIED READ MESSAGE")
+            print ("[ 55 ] NOTIFIED READ MESSAGE")                       
+            # to = op.param1
+            # if settings["cekSider"] == True:
+            #     print(str(op)) 
+            #     # nadya.sendMessageWithMention(to,op.param2)                
+            #     nadya.sendMessage(to, text="Woi jangan nyider doang lu!")
             try:
                 if op.param1 in read['readPoint']:
                     if op.param2 in read['readMember'][op.param1]:
-                        pass
+                        print(str(op.param1))
+                        pass                    
                     else:
                         read['readMember'][op.param1] += op.param2
+                        print(str(op.param1))
+                        # if settings["cekSider"] == True:                           
                     read['ROM'][op.param1][op.param2] = op.param2
                     backupData()
                 else:
@@ -779,6 +856,7 @@ while True:
         ops = oepoll.singleTrace(count=50)
         if ops is not None:
             for op in ops:
+                # print(str(op))
                 lineBot(op)
                 oepoll.setRevision(op.revision)
     except Exception as e:
