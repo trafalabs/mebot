@@ -22,7 +22,7 @@
   "lang": "JP",
   "mimic": {
     "copy": false,
-    "status": true,
+    "status": false,
     "target": {
       "u36272916f892b92e2042b0c58eb5c217": true
     }

@@ -12,9 +12,9 @@ import livejson
 #==============================================================================#
 botStart = time.time()
 
-nadya = LINE()
+# nadya = LINE()
 #nadya = LINE("TOKEN KAMU")
-# nadya = LINE("sean.makuto@gmail.com","AlphA135!#%")
+nadya = LINE("sean.makuto@gmail.com","AlphA135!#%")
 nadya.log("Auth Token : " + str(nadya.authToken))
 channelToken = nadya.getChannelResult()
 nadya.log("Channel Token : " + str(channelToken))
@@ -30,6 +30,12 @@ readOpen = codecs.open("read.json","r","utf-8")
 read = json.load(readOpen)
 settings = livejson.File("temp.json",True,False,2)
 
+# cctv={
+#     "Point1":{},
+#     "Point2":{},
+#     "Point3":{}
+# }
+cctv=livejson.File('sider.json')
 
 myProfile = {
 	"displayName": "",
@@ -152,7 +158,22 @@ def helpmessage():
                   "║〘 Credits By: ©Nadya_TJ™  〙"+"\n"+\
                       "╚═〘 Mdified By: sean.makuto  〙"
     return helpMessage
-    
+
+def goperation(to, mid, firstmessage, lastmessage):
+    try:
+        arrData = ""
+        text = "%s " %(str(firstmessage))
+        arr = []
+        mention = "@GOPERATION "
+        slen = str(len(text))
+        elen = str(len(text) + len(mention) - 1)
+        arrData = {'S':slen, 'E':elen, 'M':mid}
+        arr.append(arrData)
+        text += mention + str(lastmessage)
+        nadya.sendMessage(to,text, {'MENTION': str('{"MENTIONEES":' + json.dumps(arr) + '}')}, 0)
+    except Exception as error:
+        print(error)    
+
 def lineBot(op):
     try:
         if op.type == 0:
@@ -171,6 +192,26 @@ def lineBot(op):
             print ("[ 24 ] NOTIFIED LEAVE ROOM")
             if settings["autoLeave"] == True:
                 nadya.leaveRoom(op.param1)
+        if op.type == 55:
+            try:
+                if cctv['Point1'][op.param1]==True:
+                    if op.param1 in cctv['Point2']:  
+                        Name = nadya.getContact(op.param2).displayName
+                        kopi = nadya.getContact(op.param2).picturePath
+                        pait = nadya.getGroup(op.param1)
+                        if Name in cctv['Point3'][op.param1]:
+                            pass
+                        else:
+                            cctv['Point3'][op.param1] += "\n~" + Name
+                            if " " in Name:
+                                nick = Name.split(' ')
+                            goperation(op.param1,op.param2,"Woi ","" + "jangan nyider doang lu" )
+                    else:
+                        pass
+                else:
+                    pass
+            except:
+                pass
         if op.type == 25:
             print ("[ 25 ] SEND MESSAGE")
             msg = op.message
@@ -748,7 +789,24 @@ def lineBot(op):
                             time.sleep(0.8)
                         nadya.sendMessage(to, 'Success kick members, totals %i members' % len(mentions['MENTIONEES']))
                     else:
-                        nadya.sendMessage(to, 'Failed kick member, please mention user you want to kick')                                      
+                        nadya.sendMessage(to, 'Failed kick member, please mention user you want to kick')  
+                elif msg.text.lower()=="sider on"                                                            :
+                    try:
+                        del cctv['Point2'][to]
+                        del cctv['Point3'][to]
+                        del cctv['Point1'][to]
+                    except:
+                        pass
+                    cctv['Point2'][to] = msg.id
+                    cctv['Point3'][to] = ""
+                    cctv['Point1'][to]=True
+                    nadya.sendMessage(to,"Sider Set to On..")
+                elif msg.text.lower() == 'sider off':                    
+                    if to in cctv['Point2']:
+                        cctv['Point1'][to]=False
+                        nadya.sendMessage(to, "Sider set ot off...")
+                    else:
+                        nadya.sendMessage(to, "Off not Going")
             elif msg.contentType==7:
                         if settings['checkSticker']:
                             res = '╭───「 Sticker Info 」'
@@ -792,18 +850,20 @@ def lineBot(op):
                                 txt += u'@Alin \n'
                             nadya.sendMessage(to, text=txt, contentMetadata={u'MENTION': json.dumps({'MENTIONEES':b})}, contentType=0)
                             nadya.sendMessage(to, "Total {} Mention".format(str(len(nama))))
-                elif msg.contentType==7:
-                    if settings['checkSticker']:
-                        res = '╭───「 Sticker Info 」'
-                        res += '\n├ Sticker ID : ' + msg.contentMetadata['STKID']
-                        res += '\n├ Sticker Packages ID : ' + msg.contentMetadata['STKPKGID']
-                        res += '\n├ Sticker Version : ' + msg.contentMetadata['STKVER']
-                        res += '\n├ Sticker Link : line://shop/detail/' + msg.contentMetadata['STKPKGID']
-                        res += '\n╰───「 Hello World 」'
-                        nadya.sendMessage(to, str(res))
-                        # nadya.sendMessage(to, str(msg.contentMetadata))                                               
-                        nadya.sendImage(to,msg.contentMetadata['STKPKGID'],msg.contentMetadata['STKID'])
-                        # nadya.sendImage(b,)
+                    elif msg.text.lower().startswith("kick "):
+                        if msg.toType != 2: return nadya.sendMessage(to, 'Failed kick member, use this command only on group chat')
+                        if 'MENTION' in msg.contentMetadata.keys():
+                            mentions = ast.literal_eval(msg.contentMetadata['MENTION'])
+                            for mention in mentions['MENTIONEES']:
+                                mid = mention['M']
+                                if mid == nadyaMID:
+                                    continue
+                                try:
+                                    nadya.kickoutFromGroup(to, [mid])
+                                except Exception as talk_error:
+                                    return nadya.sendMessage(to, 'Failed kick members, the reason is ')
+                                time.sleep(0.8)
+                            nadya.sendMessage(to, 'Success kick members, totals %i members' % len(mentions['MENTIONEES']))                    
                 if settings["autoRead"] == True:
                     nadya.sendChatChecked(to, msg_id)
                 if to in read["readPoint"]:
@@ -828,21 +888,14 @@ def lineBot(op):
                                 break
 #==============================================================================#
         if op.type == 55:
-            print ("[ 55 ] NOTIFIED READ MESSAGE")                       
-            # to = op.param1
-            # if settings["cekSider"] == True:
-            #     print(str(op)) 
-            #     # nadya.sendMessageWithMention(to,op.param2)                
-            #     nadya.sendMessage(to, text="Woi jangan nyider doang lu!")
+            print ("[ 55 ] NOTIFIED READ MESSAGE")                                   
             try:
                 if op.param1 in read['readPoint']:
                     if op.param2 in read['readMember'][op.param1]:
                         print(str(op.param1))
                         pass                    
                     else:
-                        read['readMember'][op.param1] += op.param2
-                        print(str(op.param1))
-                        # if settings["cekSider"] == True:                           
+                        read['readMember'][op.param1] += op.param2                                            
                     read['ROM'][op.param1][op.param2] = op.param2
                     backupData()
                 else:
