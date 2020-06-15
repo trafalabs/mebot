@@ -222,3 +222,14 @@
 [<module 'time' (built-in)>] TalkException(code=0, reason='invalid mention.', parameterMap=None)
 [<module 'time' (built-in)>] TalkException(code=0, reason='invalid mention.', parameterMap=None)
 [<module 'time' (built-in)>] You should install FFmpeg and ffmpy from pypi
+[<module 'time' (built-in)>] local variable 'updateVideop' referenced before assignment
+[<module 'time' (built-in)>] TalkException(code=8, reason='AUTHENTICATION_DIVESTED_BY_OTHER_DEVICE', parameterMap=None)
+[<module 'time' (built-in)>] TalkException(code=8, reason='AUTHENTICATION_DIVESTED_BY_OTHER_DEVICE', parameterMap=None)
+[<module 'time' (built-in)>] TalkException(code=8, reason='AUTHENTICATION_DIVESTED_BY_OTHER_DEVICE', parameterMap=None)
+[<module 'time' (built-in)>] TalkException(code=8, reason='AUTHENTICATION_DIVESTED_BY_OTHER_DEVICE', parameterMap=None)
+[<module 'time' (built-in)>] TalkException(code=8, reason='AUTHENTICATION_DIVESTED_BY_OTHER_DEVICE', parameterMap=None)
+[<module 'time' (built-in)>] TalkException(code=8, reason='AUTHENTICATION_DIVESTED_BY_OTHER_DEVICE', parameterMap=None)
+[<module 'time' (built-in)>] TalkException(code=8, reason='AUTHENTICATION_DIVESTED_BY_OTHER_DEVICE', parameterMap=None)
+[<module 'time' (built-in)>] TalkException(code=8, reason='AUTHENTICATION_DIVESTED_BY_OTHER_DEVICE', parameterMap=None)
+[<module 'time' (built-in)>] TalkException(code=8, reason='AUTHENTICATION_DIVESTED_BY_OTHER_DEVICE', parameterMap=None)
+[<module 'time' (built-in)>] TalkException(code=8, reason='AUTHENTICATION_DIVESTED_BY_OTHER_DEVICE', parameterMap=None)

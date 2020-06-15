@@ -12,9 +12,9 @@ import livejson
 #==============================================================================#
 botStart = time.time()
 
-# nadya = LINE()
+nadya = LINE()
 #nadya = LINE("TOKEN KAMU")
-nadya = LINE("sean.makuto@gmail.com","AlphA135!#%")
+# nadya = LINE("sean.makuto@gmail.com","AlphA135!#%")
 nadya.log("Auth Token : " + str(nadya.authToken))
 channelToken = nadya.getChannelResult()
 nadya.log("Channel Token : " + str(channelToken))
@@ -37,7 +37,7 @@ settings = livejson.File("temp.json",True,False,2)
 # }
 cctv=livejson.File('sider.json')
 notaglist=livejson.File('notag.json')
-
+updateVideop=False
 myProfile = {
 	"displayName": "",
 	"statusMessage": "",
@@ -167,6 +167,7 @@ def goperation(to, mid, firstmessage, lastmessage):
         print(error)    
 
 def lineBot(op):
+    global updateVideop
     try:
         if op.type == 0:
             print ("[ 0 ] END OF OPERATION")
@@ -218,6 +219,15 @@ def lineBot(op):
                     to = receiver
             else:
                 to = receiver
+            if msg.contentType==2:
+                if updateVideop==True:
+                    try:
+                        path = nadya.downloadObjectMsg(msg_id)   
+                        print(path)             
+                        nadya.updateProfileVideoPicture(path)
+                        nadya.sendMessage(to, "Berhasil mengubah video profile")
+                    except:
+                        nadya.sendMessage(to, "Gagal mengubah video profile")
             if msg.contentType == 0:
                 if text is None:
                     return
@@ -811,14 +821,9 @@ def lineBot(op):
                         nadya.sendMessage(to, "Sider set ot off...")
                     else:
                         nadya.sendMessage(to, "Off not Going")
-                elif msg.text.lower().startswith('updatevidp '):  
-                    try:                  
-                        url=msg.text.lower().split()
-                        print(url[1])
-                        nadya.updateProfileVideoPicture(url[1])
-                        nadya.sendMessage(to,"Update Video Profile Success")
-                    except:
-                        nadya.sendMessage(to,"Update Failed!!")                        
+                elif msg.text.lower()=='updatevidp':  
+                    updateVideop=True
+                    nadya.sendMessage(to, "Silahkan upload video")                                           
             elif msg.contentType==7:
                         if settings['checkSticker']:
                             res = '╭───「 Sticker Info 」'
