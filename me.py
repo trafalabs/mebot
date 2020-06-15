@@ -148,7 +148,7 @@ def helpmessage():
                   "╠➥ Lurking" + "\n" + \
                   "║" + "\n" + \
                   "╠ 〘 Credits By: ©Nadya_TJ™  〙"+"\n"+\
-                  "╚═〘 Mdified By: sean.makuto  〙"
+                  "╚═〘 Mdified By: RIZKIFR  〙"
     return helpMessage
 
 def goperation(to, mid, firstmessage, lastmessage):
