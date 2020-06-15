@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 import json, time, ntpath
-import moviepy.editor as moviepy
+
 def loggedIn(func):
     def checkLogin(*args, **kwargs):
         if args[0].isLogin:

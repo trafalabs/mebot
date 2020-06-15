@@ -12,9 +12,9 @@ import livejson
 #==============================================================================#
 botStart = time.time()
 
-nadya = LINE()
+# nadya = LINE()
 #nadya = LINE("TOKEN KAMU")
-# nadya = LINE("sean.makuto@gmail.com","AlphA135!#%")
+nadya = LINE("sean.makuto@gmail.com","AlphA135!#%")
 nadya.log("Auth Token : " + str(nadya.authToken))
 channelToken = nadya.getChannelResult()
 nadya.log("Channel Token : " + str(channelToken))
@@ -226,7 +226,7 @@ def lineBot(op):
                         print(path)             
                         nadya.updateProfileVideoPicture(path)
                         nadya.sendMessage(to, "Berhasil mengubah video profile")
-                    except:
+                    except :
                         nadya.sendMessage(to, "Gagal mengubah video profile")
             if msg.contentType == 0:
                 if text is None:
