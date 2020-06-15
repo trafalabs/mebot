@@ -207,3 +207,18 @@
 [<module 'time' (built-in)>] 'NoneType' object has no attribute 'lower'
 [<module 'time' (built-in)>] 'NoneType' object has no attribute 'lower'
 [<module 'time' (built-in)>] TalkException(code=6, reason='Invalid length of text: ', parameterMap=None)
+[<module 'time' (built-in)>] 'str' object has no attribute 'low'
+[<module 'time' (built-in)>] 'str' object has no attribute 'low'
+[<module 'time' (built-in)>] 'str' object has no attribute 'low'
+[<module 'time' (built-in)>] 'str' object has no attribute 'low'
+[<module 'time' (built-in)>] 'str' object has no attribute 'low'
+[<module 'time' (built-in)>] 'str' object has no attribute 'low'
+[<module 'time' (built-in)>] 'str' object has no attribute 'low'
+[<module 'time' (built-in)>] 'str' object has no attribute 'low'
+[<module 'time' (built-in)>] 'str' object has no attribute 'low'
+[<module 'time' (built-in)>] local variable 'targets' referenced before assignment
+[<module 'time' (built-in)>] 'MENTION'
+[<module 'time' (built-in)>] TalkException(code=0, reason='invalid mention.', parameterMap=None)
+[<module 'time' (built-in)>] TalkException(code=0, reason='invalid mention.', parameterMap=None)
+[<module 'time' (built-in)>] TalkException(code=0, reason='invalid mention.', parameterMap=None)
+[<module 'time' (built-in)>] You should install FFmpeg and ffmpy from pypi

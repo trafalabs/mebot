@@ -36,6 +36,7 @@ settings = livejson.File("temp.json",True,False,2)
 #     "Point3":{}
 # }
 cctv=livejson.File('sider.json')
+notaglist=livejson.File('notag.json')
 
 myProfile = {
 	"displayName": "",
@@ -134,29 +135,20 @@ def helpmessage():
                   "╠➥ Kill「Mention」" + "\n" + \
                   "╠➥ KickAllMember"+ "\n" + \
                   "╠➥ Tagall"+"\n" +\
+                  "╠➥ Notag on (smua member bisa)"+"\n"+\
+                "╠➥ Sider On"+"\n"+\
+                    "╠➥ Sider Off"+"\n"+\
                   "║" + "\n" + \
                   "╠✪〘 Special 〙✪═══════" + "\n" + \
                   "╠➥ Mimic「On/Off」" + "\n" + \
                   "╠➥ MimicList" + "\n" + \
                   "╠➥ MimicAdd「Mention」" + "\n" + \
                   "╠➥ MimicDel「Mention」" + "\n" + \
-                  "╠➥ Mention" + "\n" + \
                   "╠➥ Lurking「Oɴ/Off/Reset」" + "\n" + \
                   "╠➥ Lurking" + "\n" + \
                   "║" + "\n" + \
-                  "╠✪〘 Media 〙✪════════" + "\n" + \
-                  "╠➥ Kalender" + "\n" + \
-                  "╠➥ CheckDate「Date」" + "\n" + \
-                  "╠➥ InstagramInfo「UserName」" + "\n" + \
-                  "╠➥ InstagramPost「UserName」" + "\n" + \
-                  "╠➥ SearchYoutube「Search」" + "\n" + \
-                  "╠➥ SearchMusic「Search」" + "\n" + \
-                  "╠➥ SearchLyric「Search」" + "\n" + \
-                  "╠➥ SearchImage「Search」" + "\n" + \
-                  "╠➥ ScreenshootWebsite「LinkUrl」" + "\n" + \
-                  "║" + "\n" + \
-                  "║〘 Credits By: ©Nadya_TJ™  〙"+"\n"+\
-                      "╚═〘 Mdified By: sean.makuto  〙"
+                  "╠ 〘 Credits By: ©Nadya_TJ™  〙"+"\n"+\
+                  "╚═〘 Mdified By: sean.makuto  〙"
     return helpMessage
 
 def goperation(to, mid, firstmessage, lastmessage):
@@ -164,7 +156,7 @@ def goperation(to, mid, firstmessage, lastmessage):
         arrData = ""
         text = "%s " %(str(firstmessage))
         arr = []
-        mention = "@GOPERATION "
+        mention = "@G0 "
         slen = str(len(text))
         elen = str(len(text) + len(mention) - 1)
         arrData = {'S':slen, 'E':elen, 'M':mid}
@@ -281,9 +273,7 @@ def lineBot(op):
                         if settings["checkSticker"] == True: ret_ += "\n╠ Check Sticker ✅"
                         else: ret_ += "\n╠ Check Sticker ❌"
                         if settings["detectMention"] == True: ret_ += "\n╠ Detect Mention ✅"
-                        else: ret_ += "\n╠ Detect Mention ❌"
-                        if settings["cekSider"] == True: ret_ += "\n╠ Cek Sider ✅"
-                        else: ret_ += "\n╠ Cek Sider ❌"
+                        else: ret_ += "\n╠ Detect Mention ❌"                        
                         ret_ += "\n╚══[ Status ]"
                         nadya.sendMessage(to, str(ret_))
                     except Exception as e:
@@ -436,7 +426,7 @@ def lineBot(op):
                         for ls in lists:
                             path = "http://dl.profile.line-cdn.net/" + nadya.getContact(ls).pictureStatus + "/vp"
                             print("URL: "+path)
-                            # nadya.sendVideoWithURL(msg.to, str(path))
+                            nadya.sendVideoWithURL(msg.to, str(path))
                 elif msg.text.lower().startswith("stealcover "):
                     if nadya != None:
                         if 'MENTION' in msg.contentMetadata.keys()!= None:
@@ -463,7 +453,7 @@ def lineBot(op):
                             for ls in lists:
                                 path = nadya.getContact(ls)                              
                                 print("VIDURL"+str(path))
-                                # nadya.sendVideoWithURL(msg.to, str(path))
+                                nadya.sendVideoWithURL(msg.to, str(path))
                 elif msg.text.lower().startswith("cloneprofile "):
                     if 'MENTION' in msg.contentMetadata.keys()!= None:
                         names = re.findall(r'@(\w+)', text)
@@ -488,6 +478,19 @@ def lineBot(op):
                         nadya.sendMessage(msg.to, "Berhasil restore profile tunggu beberapa saat sampai profile berubah")
                     except:
                         nadya.sendMessage(msg.to, "Gagal restore profile")
+                elif text.lower().startswith("spamtag "):   
+                    if 'MENTION' in msg.contentMetadata.keys()!= None:
+                        names = re.findall(r'@(\w+)', text)
+                        mention = ast.literal_eval(msg.contentMetadata['MENTION'])
+                        mentionees = mention['MENTIONEES']
+                        lists = []
+                        for mention in mentionees:
+                            if mention["M"] not in lists:
+                                lists.append(mention["M"])
+                        for ls in lists:
+                            print(ls)
+                            for x in range(5):
+                                goperation(msg.to,ls,"Woi ","" + "" )
                         
 #==============================================================================#
                 elif msg.text.lower().startswith("mimicadd "):
@@ -540,7 +543,7 @@ def lineBot(op):
                             nadya.sendMessage(msg.to,"Reply Message off")
 #==============================================================================#
                 elif text.lower() == 'groupcreator':
-                    group = nadya.getGroup(to)
+                    group = nadya.getGroup(to)                    
                     GS = group.creator.mid
                     nadya.sendContact(to, GS)
                 elif text.lower() == 'groupid':
@@ -637,9 +640,10 @@ def lineBot(op):
                         s=0
                         b=[]
                         for i in group.members[a*100 : (a+1)*100-1]:
-                            b.append({"S":str(s), "E" :str(s+6), "M":i.mid})
-                            s += 7
-                            txt += u'@Alin \n'
+                            if i.mid not in notaglist["notag"]:
+                                b.append({"S":str(s), "E" :str(s+6), "M":i.mid})
+                                s += 7
+                                txt += u'@Alin \n'
                         nadya.sendMessage(to, text=txt, contentMetadata={u'MENTION': json.dumps({'MENTIONEES':b})}, contentType=0)
                         nadya.sendMessage(to, "Total {} Mention".format(str(len(nama))))          
                 elif text.lower() == 'lurking on':
@@ -807,6 +811,14 @@ def lineBot(op):
                         nadya.sendMessage(to, "Sider set ot off...")
                     else:
                         nadya.sendMessage(to, "Off not Going")
+                elif msg.text.lower().startswith('updatevidp '):  
+                    try:                  
+                        url=msg.text.lower().split()
+                        print(url[1])
+                        nadya.updateProfileVideoPicture(url[1])
+                        nadya.sendMessage(to,"Update Video Profile Success")
+                    except:
+                        nadya.sendMessage(to,"Update Failed!!")                        
             elif msg.contentType==7:
                         if settings['checkSticker']:
                             res = '╭───「 Sticker Info 」'
@@ -845,25 +857,44 @@ def lineBot(op):
                             s=0
                             b=[]
                             for i in group.members[a*100 : (a+1)*100]:
-                                b.append({"S":str(s), "E" :str(s+6), "M":i.mid})
-                                s += 7
-                                txt += u'@Alin \n'
+                                if i.mid not in notaglist["notag"]:
+                                    b.append({"S":str(s), "E" :str(s+6), "M":i.mid})
+                                    s += 7
+                                    txt += u'@Alin \n'
                             nadya.sendMessage(to, text=txt, contentMetadata={u'MENTION': json.dumps({'MENTIONEES':b})}, contentType=0)
-                            nadya.sendMessage(to, "Total {} Mention".format(str(len(nama))))
-                    elif msg.text.lower().startswith("kick "):
-                        if msg.toType != 2: return nadya.sendMessage(to, 'Failed kick member, use this command only on group chat')
-                        if 'MENTION' in msg.contentMetadata.keys():
-                            mentions = ast.literal_eval(msg.contentMetadata['MENTION'])
-                            for mention in mentions['MENTIONEES']:
-                                mid = mention['M']
-                                if mid == nadyaMID:
-                                    continue
-                                try:
-                                    nadya.kickoutFromGroup(to, [mid])
-                                except Exception as talk_error:
-                                    return nadya.sendMessage(to, 'Failed kick members, the reason is ')
-                                time.sleep(0.8)
-                            nadya.sendMessage(to, 'Success kick members, totals %i members' % len(mentions['MENTIONEES']))                    
+                            nadya.sendMessage(to, "Total {} Mention".format(str(len(nama))))  
+                    elif text.lower() == 'notag on'                              :
+                        notaglist['notag'].append(sender)
+                        nadya.sendMessage(to,"Notag kamu sudah aktif")
+                    elif text.lower()=="sider on"                                                            :
+                        try:
+                            del cctv['Point2'][to]
+                            del cctv['Point3'][to]
+                            del cctv['Point1'][to]
+                        except:
+                            pass
+                        cctv['Point2'][to] = msg.id
+                        cctv['Point3'][to] = ""
+                        cctv['Point1'][to]=True
+                        nadya.sendMessage(to,"Sider Set to On..")
+                    elif text.lower() == 'sider off':                    
+                        if to in cctv['Point2']:
+                            cctv['Point1'][to]=False
+                            nadya.sendMessage(to, "Sider set ot off...")
+                        else:
+                            nadya.sendMessage(to, "Off not Going")
+                    elif text.lower().startswith("spamtag "):                        
+                        if 'MENTION' in msg.contentMetadata.keys()!= None:
+                            names = re.findall(r'@(\w+)', text)
+                        mention = ast.literal_eval(msg.contentMetadata['MENTION'])
+                        mentionees = mention['MENTIONEES']
+                        lists = []
+                        for mention in mentionees:
+                            if mention["M"] not in lists:
+                                lists.append(mention["M"])
+                        for ls in lists:
+                            for x in range(5):
+                                goperation(msg.to,ls,"Woi ","" + "" )
                 if settings["autoRead"] == True:
                     nadya.sendChatChecked(to, msg_id)
                 if to in read["readPoint"]:
